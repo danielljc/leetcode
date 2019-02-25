@@ -51,20 +51,24 @@ public class Solution1 {
         // HashMap存在索引，可以直接定位到键值对
         Map<Integer, Integer> map = new HashMap<>();
         for (int i = 0; i < nums.length; i++) {
-            map.put(nums[i], i);
             int complement = target - nums[i];
             if (map.containsKey(complement) && map.get(complement) != i) {
                 // 一直往后遍历，直到发现前面存在一个数和先的数加起来为target，所以把i放在后面
                 return new int[] {map.get(complement), i};
             }
+            // 必须要放在后面，否则，当两个数字相同，作为key时，会覆盖value的值
+            // 例：[3, 3] 6
+            // 就会出现第一次遍历，map是(3, 0)，第二次遍历，map是(3, 1)
+            // 若放在后面，则不会覆盖，因为当发现相同的第二个数字满足target时，直接return了，不会覆盖；若不满足，覆盖就覆盖也没事儿
+            map.put(nums[i], i);
         }
         throw new IllegalArgumentException("No two sum solution");
     }
 
     public static void main(String[] args) {
-        int[] nums = {2, 7, 11, 15};
+        int[] nums = {3, 3};
         long start = System.currentTimeMillis();
-        int[] res = twoSum3(nums, 9);
+        int[] res = twoSum3(nums, 6);
         long end = System.currentTimeMillis();
         System.out.println("cost:" + (end - start) + "ms");
         System.out.println(Arrays.toString(res));
